@@ -7,8 +7,8 @@ export const getUsers = async () => {
     return response.data;
 };
 
-export const addUser = async (fullName) => {
-    const response = await axios.post(API_URL, { full_name: fullName });
+export const addUser = async (fullName, result) => {
+    const response = await axios.post(API_URL, { full_name: fullName, calculated_value: result });
     return response.data;
 };
 

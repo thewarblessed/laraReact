@@ -15,6 +15,7 @@ function App() {
     const fetchUsers = async () => {
         try {
             const data = await getUsers();
+            // console.log(data);
             setUsers(data);
         } catch (error) {
             console.error("Error fetching users:", error);
@@ -23,10 +24,11 @@ function App() {
 
     // Function to perform calculations
     const calculateResult = (a, b, op) => {
-        const n1 = parseFloat(a);
-        const n2 = parseFloat(b);
-        if (isNaN(n1) || isNaN(n2)) return 'Invalid';
+        const n1 = parseFloat(a) || 0; // Defaults to 0 if empty
+        const n2 = parseFloat(b) || 0;
         
+        if (isNaN(n1) || isNaN(n2)) return 'Invalid';
+    
         switch (op) {
             case '+': return n1 + n2;
             case '-': return n1 - n2;
@@ -35,7 +37,7 @@ function App() {
             default: return 'Invalid';
         }
     };
-
+    
     const handleAddUser = async () => {
         if (!/^[a-zA-Z\s]+$/.test(fullName)) {
             alert("Only letters and spaces are allowed.");
@@ -56,9 +58,13 @@ function App() {
 
     const handleUpdateUser = async (id) => {
         const newName = prompt("Enter new name:");
+        
         if (newName && /^[a-zA-Z\s]+$/.test(newName)) {
             try {
-                await updateUser(id, newName);
+                const user = users.find(user => user.id === id);
+                const newResult = calculateResult(user.num1, user.num2, user.operator);
+    
+                await updateUser(id, newName, newResult);
                 fetchUsers();
             } catch (error) {
                 console.error("Error updating user:", error);
@@ -127,7 +133,7 @@ function App() {
                     {users.map(user => (
                         <tr key={user.id}>
                             <td>{user.full_name}</td>
-                            <td>{user.result}</td>
+                            <td>{user.calculated_value}</td>
                             <td>
                                 <button onClick={() => handleUpdateUser(user.id)}>Edit</button>
                                 <button onClick={() => handleDeleteUser(user.id)} style={{ marginLeft: '10px' }}>Delete</button>
